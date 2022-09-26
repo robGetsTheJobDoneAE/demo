@@ -1,0 +1,81 @@
+openapi: 3.0.0
+x-stoplight:
+  id: x2bldnn0jm8ja
+info:
+  title: test-api
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/cool/{userid}':
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  food:
+                    type: array
+                    items:
+                      type: string
+                x-examples:
+                  example-1:
+                    food:
+                      - icecream
+              examples:
+                example-1:
+                  value:
+                    food:
+                      - string
+      operationId: get-cool
+      description: This route returns cool food
+      security:
+        - my-super-cool-api-key: []
+    parameters:
+      - schema:
+          type: string
+        name: userid
+        in: path
+        required: true
+        description: This is the user id
+    post:
+      summary: ''
+      operationId: post-cool-userid
+      responses:
+        '200':
+          description: OK
+      description: 'Post cool foods '
+      security:
+        - my-super-cool-api-key: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                foods:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      temp:
+                        type: integer
+                      name:
+                        type: string
+              x-examples:
+                example-1:
+                  foods:
+                    - temp: 10
+                      name: icecream
+components:
+  schemas: {}
+  securitySchemes:
+    my-super-cool-api-key:
+      name: API Key
+      type: apiKey
+      in: header
