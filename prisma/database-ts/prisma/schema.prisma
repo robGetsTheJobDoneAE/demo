@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      Int       @id @default(autoincrement())
+  date    DateTime  @default(now())
+  name    String
+  email   String
+  Project Project[]
+}
+
+model Project {
+  id           Int           @id @default(autoincrement())
+  date         DateTime      @default(now())
+  name         String
+  elasticIndex String
+  owner        User          @relation(fields: [userId], references: [id])
+  monitors     UserMonitor[]
+  userId       Int
+  Email        Email?        @relation(fields: [emailId], references: [id])
+  emailId      Int?
+  Slack        Slack?        @relation(fields: [slackId], references: [id])
+  slackId      Int?
+}
+
+model UserMonitor {
+  id         Int       @id @default(autoincrement())
+  name       String
+  email      String
+  slack      String?
+  date       DateTime  @default(now())
+  toEmails   Email[]   @relation("sentEmail")
+  fromEmails Email[]   @relation("fromEmail")
+  toSlack    Slack[]   @relation("sentSlack")
+  fromSlack  Slack[]   @relation("fromSlack")
+  Project    Project[]
+}
+
+model Email {
+  id        Int           @id @default(autoincrement())
+  channel   String?
+  to        UserMonitor[] @relation("sentEmail")
+  from      UserMonitor   @relation("fromEmail", fields: [userId], references: [id])
+  userId    Int
+  date      DateTime
+  created   DateTime      @default(now())
+  score     Float
+  magnitude Float
+  Project   Project[]
+}
+
+model Slack {
+  id        Int           @id @default(autoincrement())
+  to        UserMonitor[] @relation("sentSlack")
+  from      UserMonitor   @relation("fromSlack", fields: [userId], references: [id])
+  channel   String?
+  userId    Int
+  date      DateTime
+  created   DateTime      @default(now())
+  score     Float
+  magnitude Float
+  Project   Project[]
+}
